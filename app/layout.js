@@ -1,5 +1,8 @@
 import "./globals.css";
-import { NavBar, Footer } from "../Components";
+import NavBar from "../Components/NavBar";
+import Footer from "../Components/Footer";
+
+import {CrowdFundingProvider} from '../Context/CrowdFunding'
 
 export const metadata = {
   title: "Create Next App",
@@ -11,9 +14,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head />
       <body>
+        <CrowdFundingProvider>
         <NavBar />
         <main>{children}</main>
         <Footer />
+        </CrowdFundingProvider>
       </body>
     </html>
   );
