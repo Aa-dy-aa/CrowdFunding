@@ -21,19 +21,26 @@ export const CrowdFundingProvider = ({children}) =>{
         const signer = provider.getSigner();
         const contract = fetchContract(signer);
 
-        console.log(currentAccount);
+        // ensure we use the connected signer address as the campaign owner
+        const signerAddress = await signer.getAddress();
+        // keep local state in sync
+        setCurrentAccount(signerAddress);
+        console.log('creating campaign from', signerAddress);
         try{
+            const deadlineSeconds = Math.floor(new Date(deadline).getTime() / 1000);
             const transaction = await contract.createCampaign(
-                currentAccount,
+                signerAddress,
                 title,
                 description,
                 ethers.utils.parseUnits(amount, 18),
-                new Date(deadline).getTime()
+                deadlineSeconds
             );
 
             await transaction.wait();
 
             console.log("contract call success", transaction);
+            // refresh so the created campaign appears in the UI
+            if (typeof window !== "undefined") location.reload();
         }
         catch(error){
             console.log("contract call failure", error);
@@ -41,7 +48,8 @@ export const CrowdFundingProvider = ({children}) =>{
     };
 
     const getCampaigns = async () =>{
-        const provider = new ethers.providers.JsonRpcProvider();
+        // const provider = new ethers.providers.JsonRpcProvider();
+        const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
         const contract = fetchContract(provider);
 
         const campaigns = await contract.getCampaigns();
@@ -60,31 +68,42 @@ export const CrowdFundingProvider = ({children}) =>{
         return parsedCampaigns;
     };
     const getUserCampaigns = async()=>{
-        const provider = new ethers.providers.JsonRpcProvider();
+        // use the same local provider as getCampaigns
+        const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
         const contract = fetchContract(provider);
 
         const allCampaigns= await contract.getCampaigns();
 
-        const accounts = await window.ethereum.request({
-            method: "eth_accounts",
-        });
-        const currentUser = accounts[0];
+        // prefer the connected account in state, fallback to window.ethereum
+        let currentUser = currentAccount;
+        try{
+            if(!currentUser && window.ethereum){
+                const accounts = await window.ethereum.request({ method: "eth_accounts" });
+                currentUser = accounts && accounts[0];
+            }
+        }catch(e){
+            console.warn('unable to read window.ethereum accounts', e);
+        }
 
-        const filteredCampaigns =allCampaigns.filter(
-            (campaign) =>
-                campaign.owner === "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-        );
-        const userData = filteredCampaigns.map((campaign,i)=>({
-            owner: campaign.owner,
-            title: campaign.title,
-            description: campaign.description,
-            target: ethers.utils.formatEther(campaign.target.toString()),
-            deadline: campaign.deadline.toNumber(),
-            amountCollected: ethers.utils.formatEther(
-                campaign.amountCollected.toString()
-            ),
-            pId:i,
-        }))
+        if(!currentUser) return [];
+
+        const userData = [];
+        allCampaigns.forEach((campaign, i) => {
+            if (campaign.owner.toLowerCase() === currentUser.toLowerCase()) {
+                userData.push({
+                    owner: campaign.owner,
+                    title: campaign.title,
+                    description: campaign.description,
+                    target: ethers.utils.formatEther(campaign.target.toString()),
+                    deadline: campaign.deadline.toNumber(),
+                    amountCollected: ethers.utils.formatEther(
+                        campaign.amountCollected.toString()
+                    ),
+                    pId: i,
+                });
+            }
+        });
+
         return userData;
     };
     const donate = async(pId,amount)=>{

@@ -1,15 +1,20 @@
 const hre = require("hardhat");
-//0x5FbDB2315678afecb367f032d93F642f64180aa3
+
 async function main() {
+  // Get all signers from Hardhat
+  const signers = await hre.ethers.getSigners();
 
-  const CrowdFunding = await hre.ethers.getContractFactory("CrowdFunding");
+  // Use Account 2 (index 1)
+  const deployer = signers[1]; 
+  console.log("Deploying contract with account:", deployer.address);
+
+  const CrowdFunding = await hre.ethers.getContractFactory("CrowdFunding", deployer);
+
+  // Deploy the contract
   const crowdFunding = await CrowdFunding.deploy();
-
   await crowdFunding.deployed();
 
-  console.log(
-    `CrowdFunding deployed to ${crowdFunding.address}`
-  );
+  console.log(`CrowdFunding deployed to ${crowdFunding.address}`);
 }
 
 main().catch((error) => {

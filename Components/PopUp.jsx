@@ -1,9 +1,5 @@
 import React from 'react'
 
-function PopUp() {
-  return (
-    <div>PopUp</div>
-  )
-}
+const PopUp=({setOpenModel,donate, donateFunction, getDonations})
 
 export default PopUp
