@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { TypewriterEffect } from "./ui/typewriter-effect";
+
 
 const Hero = ({ titleData, createCampaign }) => {
   const [campaign, setCampaign] = useState({
@@ -9,11 +11,17 @@ const Hero = ({ titleData, createCampaign }) => {
     deadline: "",
   });
 
+  // Words for typewriter
+  const words = [
+    { text: "Crypto King" },
+    { text: "Crowd Funding CK" },
+  ];
+
   const createNewCampaign = async (e) => {
     e.preventDefault();
     try {
       await createCampaign(campaign);
-      setCampaign({ title: "", description: "", amount: "", deadline: "" }); // reset form
+      setCampaign({ title: "", description: "", amount: "", deadline: "" });
     } catch (error) {
       console.log(error);
     }
@@ -45,13 +53,13 @@ const Hero = ({ titleData, createCampaign }) => {
 
         {/* Content */}
         <div className="relative px-4 py-16 mx-auto overflow-hidden sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-8 lg:py-20">
-          <div className="flex flex-col items-center justify-between xl:flex-row">
+          <div className="flex flex-col items-start justify-between xl:flex-row">
             {/* Left side: text */}
             <div className="w-full max-w-xl mb-12 xl:mb-0 xl:pr-16 xl:w-7/12">
-              <h2 className="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-white sm:text-5xl sm:leading-none">
-                Crypto King <br className="hidden md:block" /> Crowd Funding CK
+              <h2 className="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-white sm:text-5xl sm:leading-none text-left">
+                <TypewriterEffect words={words} className="text-white text-left" />
               </h2>
-              <p className="max-w-xl mb-4 text-base text-gray-200 md:text-lg">
+              <p className="max-w-xl mb-4 text-base text-gray-200 md:text-lg text-left">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos
                 consequuntur, corporis nobis accusantium laborum maiores
                 consectetur, iste voluptatibus commodi quod numquam eius
