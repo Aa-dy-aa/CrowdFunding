@@ -32,14 +32,19 @@ const index= () =>{
 
   const [openModel, setOpenModel] = useState(false);
   const [donateCampaign, setDonateCampaign] = useState();
+  console.log('page render, donateCampaign:', donateCampaign);
 
-  console.log(donateCampaign);
+  useEffect(() => {
+    console.log('popup state changed -> openModel:', openModel, 'donateCampaign:', donateCampaign);
+  }, [openModel, donateCampaign]);
   return(
     <>
       <Hero titleData={titleData} createCampaign={createCampaign}/>
   <Card title="All Listed Campaigns" allcampaign={allcampaign} setOpenModel={setOpenModel} setDonate={setDonateCampaign}/>
       <Card title="Your Created Campaign" allcampaign={usercampaign} setOpenModel={setOpenModel} setDonate={setDonateCampaign}/>
-      {openModel && (<PopUp setOpenModel={setOpenModel} getDonation={getDonations} donate={donateCampaign} donateFunction={donate}/>)} 
+  {openModel && donateCampaign && (
+    <PopUp setOpenModel={setOpenModel} getDonations={getDonations} donate={donateCampaign} donateFunction={donate}/>
+  )}
     </>
   )
 };

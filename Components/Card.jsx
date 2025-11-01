@@ -61,8 +61,14 @@ const Card = ({ title, allcampaign = [], setOpenModel, setDonate }) => {
             icon={null}
             className="cursor-pointer hover:shadow-lg transition-shadow duration-300 rounded-xl overflow-hidden"
             onClick={() => {
+              // debug: log click and campaign
+              console.log('Card clicked:', campaign);
+              // ensure donate state is set before opening modal
               setDonate(campaign);
-              setOpenModel(true);
+              setTimeout(() => {
+                console.log('Opening modal for:', campaign.pId);
+                setOpenModel(true);
+              }, 50);
             }}
           />
         ))}
