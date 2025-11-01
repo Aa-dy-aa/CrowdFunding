@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@react-three/fiber": "^9.0.0-alpha.8",
     "@tabler/icons-react": "^3.35.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -18,11 +19,13 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "tailwind-merge": "^3.3.1",
+    "three": "^0.181.0",
     "web3modal": "^1.9.12"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "@tailwindcss/postcss": "^4.1.14",
+    "@types/three": "^0.181.0",
     "autoprefixer": "^10.4.21",
     "hardhat": "^2.13.0",
     "postcss": "^8.5.6",
